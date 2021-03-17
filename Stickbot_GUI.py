@@ -1,9 +1,11 @@
 from tkinter import *
 
+from tkinter.ttk import Progressbar
+
+from tkinter import ttk
 
 Stickbot = Tk()  # creates a tkinter object (GUI)
 Stickbot.title("Stick-Bot Interactive Interface") # the title of the program/GUI
-
 
 
 Stickbot.geometry("600x400")
@@ -63,12 +65,18 @@ graphLocation.config(bg='lightgreen')
 graphLocation.configure(font=Font_tuple)
 
 # Crop health location
-cropHealth = Message(Stickbot, text="CROP HEALTH")
-cropHealth.grid(row=4, column=5, columnspan=4, rowspan=2)
-cropHealth.config(bg='cyan')
-cropHealth.configure(font=Font_tuple)
+cropHeath = 40
+style = ttk.Style()
 
+style.theme_use('default',)
 
+style.configure("black.Horizontal.TProgressbar", background='green')
+
+bar = Progressbar(Stickbot, length=200, style='black.Horizontal.TProgressbar')
+
+bar['value'] = cropHeath
+
+bar.grid(column=5, row=4, rowspan=2)
 
 
 
