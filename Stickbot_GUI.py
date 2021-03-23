@@ -15,7 +15,6 @@ smallfont = ("Comic Sans MS", 15, "bold")
 
 cropHeath = 40
 
-
 class Stickbot(tk.Tk):
 
     # __init__ function for class tkinterApp
@@ -111,6 +110,22 @@ class Mainpage(tk.Frame):
         healthintext = Label(self, text=healthdigit, background="cyan", foreground="black", borderwidth=7,
                              font=smallfont, relief='flat')
         healthintext.grid(row=3, column=5)
+
+        # Clock widget
+
+        self.current_Time = ''
+        self.current_time2 = "Current Time: " + time.strftime('%H:%M:%S')
+
+        self.clock = Label(self, text=self.current_time2, font=mediumfont, background='cyan', foreground='black')
+
+        self.clock.grid(row=2,column=5)
+
+        self.clock_Tick() #after the first call, the function itself calls intself every 200 milisecond to referesh the time
+    
+    def clock_Tick(self): 
+        self.current_time2 = "Current Time: " + time.strftime('%H:%M:%S')
+        self.clock.configure(text=self.current_time2)
+        self.clock.after(200, self.clock_Tick) 
 
     def close(self):
         self.master.quit()
