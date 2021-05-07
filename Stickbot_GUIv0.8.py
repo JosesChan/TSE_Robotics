@@ -8,186 +8,210 @@ from tkinter import messagebox
 import tkinter.scrolledtext as st
 from time import strftime
 import tkinter
-
+import sys
 import matplotlib.pyplot as plt
 
-
-#LARGEFONT = ("Comic Sans MS", 30, "bold")
+# LARGEFONT = ("Comic Sans MS", 30, "bold")
 mediumfont = ("Comic Sans MS", 20, "bold")
 smallfont = ("Comic Sans MS", 15, "bold")
 
-cropHeath = 40
-c02_score = None
-temperature_score = None
-ph_score = None
-oxygen_score = None
+cropHealth = 0
+c02_score = 0
+temperature_score = 0
+ph_score = 0
+oxygen_score = 0
+fileYlist = []
+timeHour_x = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+oxygenError =""
+tempError =""
+pHError =""
+co2Error =""
+# list to store values from files globally
+def readfile(fileName):
+    # Function that will take the file wanting to be read
+    fileYlist.clear()
+    file = fileName  # assign the filename to a local variable
+    try:
+        oFile = open(file, "r")
+    except FileNotFoundError:
+        print("Filename;" + file + " is not found")
+        input("press any key to exit....")
+        sys.exit()
+    # try block to accept error of file not being found
+    rFile = oFile.readlines()
+    for newline in rFile:
+        text_split = newline.split(",")
+        for text in text_split:
+            fileYlist.append(text)
+    # reads the file and splits it via a comma and adds it to the global lists.
+    oFile.close()
 
 
-def c02(): # This checks all the imported values against the correct mesuerments to make sure they are in the bounds stated and creates 1 part of the score for the overall crop health graph. 
- 
-  global c02_score
-  c02_score = 0 # Overall c02 score. 
-  c02_input = 1200, 1100, 1000, 1000, 2000, 5, 76, 3, 54, 3, 45, 2, 4, 2, 43, 2, 70, 8,19, 20 # To be replaced with the imported variable name. 
 
-  for x in c02_input:
-   if x <= 1300 and x >= 1000:
-     print ("Green")
-     c02_score += 1
+def c02():  # This checks all the imported values against the correct mesuerments to make sure they are in the bounds stated and creates 1 part of the score for the overall crop health graph.
 
-   elif x > 1310 and x < 1001:
-      print ("Red")
+    global c02_score,  co2Error
+    c02_score = 0  # Overall c02 score.
+    readfile("co2.csv")
 
-   else:
-     print ("Red")
- 
+    for x in range(len(fileYlist)):
+        if int(fileYlist[x]) <= 1300 and int(fileYlist[x]) >= 1000:
+            print("Green")
+            c02_score += 1
 
-  if c02_score == 24:
-    c02_score += 1
+        elif int(fileYlist[x]) > 1310 and int(fileYlist[x]) < 1001:
+            print("Red")
+            co2Error = co2Error + "\n" + "there isnt enough cO2 at: " + str(x) + ":00:00"
 
+        else:
+            print("red")
+            co2Error = co2Error + "\n" + "there isnt enough cO2 at: " + str(x) + ":00:00"
 
+        #ERROR
+        #ERROR
+        #ERROR this code seems to have a flaw with the else, please sort it.
 
-def c02chart(): # Creates the graph to show all of the readings taken over the last stated time period.
-
-
- c02x = 2, 3, 4, 5, 6, 7, 8, 9, 1 # To be replaced with the imported variable name. 
- c02y = 5, 3, 2, 5, 6, 7, 8, 9, 2 # To be replaced with the imported variable name. 
- xpoints = c02x
- ypoints = c02y
-
- plt.plot(xpoints, ypoints, 'o')
-
- plt.xlabel("Time")
- plt.ylabel("Measurement (PPM)")
- plt.title("C02 graph")
- plt.show()
-
-def temperature(): # This checks all the imported values against the correct mesuerments to make sure they are in the bounds stated and creates 1 part of the score for the overall crop health grawater. 
- 
-  global temperature_score
-  temperature_score = 0 # Overall water score. 
-  temperature_input = 1200, 1100, 1000, 1000, 2000, 5, 76, 3, 54, 3, 45, 2, 4, 2, 43, 2, 70, 8,19, 20 # To be replaced with the imported variable name. 
-
-  for x in temperature_input:
-   if x <= 78 and x >= 70:
-     print ("Green")
-     temperature_score += 1
-
-   elif x > 78 and x < 70:
-      print ("Red")
-
-   else:
-     print ("Red")
- 
-
-  if temperature_score == 24:
-    temperature_score += 1
-  
+    if c02_score == 24:
+        c02_score += 1
 
 
-def temperaturechart(): # Creates the grawater to show all of the readings taken over the last stated time period.
-
- import matplotlib.pyplot as plt
-
- temperaturex = 2, 3, 4, 5, 6, 7, 8, 9, 1 # To be replaced with the imported variable name. 
- temperaturey = 5, 3, 2, 5, 6, 7, 8, 9, 2 # To be replaced with the imported variable name. 
- xpoints = temperaturex
- ypoints = temperaturey
-
- plt.plot(xpoints, ypoints, 'o')
-
- plt.xlabel("Time")
- plt.ylabel("Measurement (PPH)")
- plt.title("Temperature graph")
- plt.show()
-
-temperature() # Calls the water function.
-print("temperature score = ", temperature_score, "/ 25") # Displays the water score out of 25.
-
-def ph(): # This checks all the imported values against the correct mesuerments to make sure they are in the bounds stated and creates 1 part of the score for the overall crop health graph. 
- 
-  global ph_score
-  ph_score = 0 # Overall ph score. 
-  ph_input = 1200, 1100, 1000, 1000, 2000, 5, 76, 3, 54, 3, 45, 2, 4, 2, 43, 2, 70, 8,19, 20 # To be replaced with the imported variable name. 
-
-  for x in ph_input:
-   if x <= 8.3 and x >= 5.5:
-     print ("Green")
-     ph_score += 1
-
-   elif x > 8.4 and x < 5.5:
-      print ("Red")
-
-   else:
-     print ("Red")
- 
-
-  if ph_score == 24:
-    ph_score += 1
-  
+def c02chart():  # Creates the graph to show all of the readings taken over the last stated time period.
+    ypoints = []
+    for x in range(len(fileYlist)):
+        ypoints.append(int(fileYlist[x]))
 
 
-def phchart(): # Creates the graph to show all of the readings taken over the last stated time period.
 
- import matplotlib.pyplot as plt
+    plt.plot(timeHour_x, ypoints, 'r--')
 
- phx = 2, 3, 4, 5, 6, 7, 8, 9, 1 # To be replaced with the imported variable name. 
- phy = 5, 3, 2, 5, 6, 7, 8, 9, 2 # To be replaced with the imported variable name. 
- xpoints = phx
- ypoints = phy
+    plt.xlabel("Time(Hour)")
+    plt.ylabel("Measurement (PPM)")
+    plt.title("C02 graph")
+    plt.show()
 
- plt.plot(xpoints, ypoints, 'o')
+def temperature():  # This checks all the imported values against the correct mesuerments to make sure they are in the bounds stated and creates 1 part of the score for the overall crop health grawater.
 
- plt.xlabel("Time")
- plt.ylabel("Measurement (PH)")
- plt.title("PH graph")
- plt.show()
+    global temperature_score, tempError
+    temperature_score = 0  # Overall water score.
+    readfile("temperature.csv")
 
-ph() # Calls the ph function.
-print("PH score = ", ph_score, "/ 25") # Displays the ph score out of 25.
+    for x in range(len(fileYlist)):
+        if float(fileYlist[x]) <= 25 and float(fileYlist[x]) >= 21:
+            print("Green")
+            temperature_score += 1
 
-def oxygen(): # This checks all the imported values against the correct mesuerments to make sure they are in the bounds stated and creates 1 part of the score for the overall crop health graph oxygen. 
- 
-  global oxygen_score
-  oxygen_score = 0 # Overall oxgen score. 
-  oxygen_input = 1200, 1100, 1000, 1000, 2000, 5, 76, 3, 54, 3, 45, 2, 4, 2, 43, 2, 70, 8,19, 20 # To be replaced with the imported variable name. 
+        elif float(fileYlist[x]) > 25 and float(fileYlist[x]) < 21:
+            print("Red")
+            tempError = tempError + "\n" + "temperature is not optimal at: " + str(x) + ":00:00"
 
-  for x in oxygen_input:
-   if x <= 6 and x >= 5:
-     print ("Green")
-     oxygen_score += 1
+        else:
+            print("Red")
+            tempError = tempError + "\n" + "temperature is not optimal at: " + str(x) + ":00:00"
 
-   elif x > 6.1 and x < 4.9:
-      print ("Red")
-
-   else:
-     print ("Red")
- 
-
-  if oxygen_score == 24:
-    oxygen_score += 1
-  
+    if temperature_score == 24:
+        temperature_score += 1
 
 
-def oxygenchart(): # Creates the graph oxygen to show all of the readings taken over the last stated time period.
+def temperaturechart():  # Creates the graph to show all of the readings taken over the last stated time period.
 
- import matplotlib.pyplot as plt
+    ypoints = []
+    for x in range(len(fileYlist)):
+        ypoints.append(float(fileYlist[x]))
 
- oxygenx = 2, 3, 4, 5, 6, 7, 8, 9, 1 # To be replaced with the imported variable name. 
- oxygeny = 5, 3, 2, 5, 6, 7, 8, 9, 2 # To be replaced with the imported variable name. 
- xpoints = oxygenx
- ypoints = oxygeny
+    plt.plot(timeHour_x, ypoints)
 
- plt.plot(xpoints, ypoints, 'o')
-
- plt.xlabel("Time")
- plt.ylabel("Measurement (MG/L)")
- plt.title("OXYGEN graph")
- plt.show()
-
-oxygen() # Calls the oxgen function.
-print("OXYGEN score = ", oxygen_score, "/ 25") # Displays the oxygen score out of 25.
+    plt.xlabel("Time")
+    plt.ylabel("Measurement (Celsius)")
+    plt.title("Temperature graph")
+    plt.show()
 
 
+
+def ph():  # This checks all the imported values against the correct mesuerments to make sure they are in the bounds stated and creates 1 part of the score for the overall crop health graph.
+
+    global ph_score,pHError
+    ph_score = 0  # Overall ph score.
+    readfile("pH.csv")
+
+    for x in range(len(fileYlist)):
+        if float(fileYlist[x]) <= 8.3 and float(fileYlist[x]) >= 5.5:
+            print("Green")
+            ph_score += 1
+
+        elif float(fileYlist[x]) > 8.3 and float(fileYlist[x]) < 5.5:
+            print("Red")
+            pHError = pHError + "\n" + "pH is not optimal at: " + str(x) + ":00:00"
+
+        else:
+            print("Red")
+            pHError = pHError + "\n" + "pH is not optimal at: " + str(x) + ":00:00"
+
+    if ph_score == 24:
+        ph_score += 1
+
+
+def phchart():  # Creates the graph to show all of the readings taken over the last stated time period.
+
+    ypoints = []
+    for x in range(len(fileYlist)):
+        ypoints.append(float(fileYlist[x]))
+
+    plt.plot(timeHour_x, ypoints, 'b--')
+
+    plt.xlabel("Time")
+    plt.ylabel("Measurement (pH)")
+    plt.title("pH graph")
+    plt.show()
+
+
+
+
+def oxygen():  # This checks all the imported values against the correct mesuerments to make sure they are in the bounds stated and creates 1 part of the score for the overall crop health graph oxygen.
+
+    global oxygen_score, oxygenError
+    oxygen_score = 0  # Overall oxygen score.
+    readfile("oxygen.csv")
+
+    for x in range(len(fileYlist)):
+        if float(fileYlist[x]) <= 6 and float(fileYlist[x]) >= 5:
+            print("Green")
+            oxygen_score += 1
+
+        elif float(fileYlist[x]) > 6.1 and float(fileYlist[x]) < 4.9:
+            print("Red")
+            oxygenError = oxygenError +"\n" +"there isnt enough oxygen at: "+ str(x) +":00:00"
+
+        else:
+            print("Red")
+            oxygenError = oxygenError + "\n" + "there isnt enough oxygen at: " + str(x)+ ":00:00"
+
+    if oxygen_score == 24:
+        oxygen_score += 1
+
+
+def oxygenchart():  # Creates the graph oxygen to show all of the readings taken over the last stated time period.
+
+    ypoints = []
+    for x in range(len(fileYlist)):
+        ypoints.append(float(fileYlist[x]))
+
+    plt.plot(timeHour_x, ypoints, 'b--')
+
+    plt.xlabel("Time")
+    plt.ylabel("Measurement (MG/L)")
+    plt.title("OXYGEN graph")
+    plt.show()
+
+def scoreCalc():
+    global cropHealth
+    cropHealth = (ph_score + temperature_score + oxygen_score + c02_score)
+
+
+c02()
+temperature()  # Calls the water function.
+ph()  # Calls the ph function.
+oxygen()  # Calls the oxygen function.
+scoreCalc()
 class Stickbot(tk.Tk):
 
     # __init__ function for class tkinterApp
@@ -274,11 +298,11 @@ class Mainpage(tk.Frame):
 
         progress_Bar = Progressbar(self, length=200, style='black.Horizontal.TProgressbar')
 
-        progress_Bar['value'] = cropHeath
+        progress_Bar['value'] = cropHealth
 
         progress_Bar.grid(row=4, column=5, rowspan=2)
 
-        healthdigit = str(cropHeath) + "/100"
+        healthdigit = str(cropHealth) + "/100"
 
         healthintext = Label(self, text=healthdigit, foreground="black", borderwidth=2,
                              font=smallfont, relief='flat')
@@ -291,14 +315,14 @@ class Mainpage(tk.Frame):
 
         self.clock = Label(self, text=self.current_time2, font=mediumfont, background='cyan', foreground='black')
 
-        self.clock.grid(row=2,column=5)
+        self.clock.grid(row=2, column=5)
 
-        self.clock_Tick() #after the first call, the function itself calls intself every 200 milisecond to referesh the time
-    
-    def clock_Tick(self): 
+        self.clock_Tick()  # after the first call, the function itself calls intself every 200 milisecond to referesh the time
+
+    def clock_Tick(self):
         self.current_time2 = "Current Time: " + time.strftime('%H:%M:%S')
         self.clock.configure(text=self.current_time2)
-        self.clock.after(200, self.clock_Tick) 
+        self.clock.after(200, self.clock_Tick)
 
     def close(self):
         self.master.quit()
@@ -341,32 +365,16 @@ class CO2(tk.Frame):
         updateErrorLog.grid(row=1, column=3, columnspan=2, rowspan=5, pady=10, padx=10)
 
         # Inserting Text which is read only
-        updateErrorLog.insert(tk.INSERT,
-                              """ 
-		All the Errors & Updates are listed here. 
-		Hi 
-		Error one == nothing LOL 
-		Error two == nothing LOL
-		Error three == nothing LOL
-		Error four == nothing LOL
-		Error five == nothing LOL
-		Error six == nothing LOL
-		Error seven == nothing LOL
-		""")
-
+        updateErrorLog.insert(tk.INSERT, co2Error)
         # Making the Log read only
         updateErrorLog.configure(state='disabled')
 
-       # graph location
-        graphLocation = Button(self, text="Graph Health ", command=lambda:[c02(), c02chart()])
+        # graph location
+        graphLocation = Button(self, text="Graph Health ", command=lambda: [c02(), c02chart()])
         graphLocation.grid(row=1, column=5, columnspan=4, rowspan=3)
-
 
     def close(self):
         self.master.quit()
-    
-
-    
 
 
 # window frame for Temperature stats 
@@ -406,24 +414,12 @@ class Temperature(tk.Frame):
         updateErrorLog.grid(row=1, column=3, columnspan=2, rowspan=5, pady=10, padx=10)
 
         # Inserting Text which is read only
-        updateErrorLog.insert(tk.INSERT,
-                              """ 
-		All the Errors & Updates are listed here. 
-		Hi 
-		Error one == nothing LOL 
-		Error two == nothing LOL
-		Error three == nothing LOL
-		Error four == nothing LOL
-		Error five == nothing LOL
-		Error six == nothing LOL
-		Error seven == nothing LOL
-		""")
-
+        updateErrorLog.insert(tk.INSERT,tempError)
         # Making the Log read only
         updateErrorLog.configure(state='disabled')
 
-       # graph location
-        graphLocation = Button(self, text="Graph Health ", command=lambda:[temperature(), temperaturechart()])
+        # graph location
+        graphLocation = Button(self, text="Graph Health ", command=lambda: [temperature(), temperaturechart()])
         graphLocation.grid(row=1, column=5, columnspan=4, rowspan=3)
 
     def close(self):
@@ -468,24 +464,12 @@ class PH(tk.Frame):
         updateErrorLog.grid(row=1, column=3, columnspan=2, rowspan=5, pady=10, padx=10)
 
         # Inserting Text which is read only
-        updateErrorLog.insert(tk.INSERT,
-                              """ 
-		All the Errors & Updates are listed here. 
-		Hi 
-		Error one == nothing LOL 
-		Error two == nothing LOL
-		Error three == nothing LOL
-		Error four == nothing LOL
-		Error five == nothing LOL
-		Error six == nothing LOL
-		Error seven == nothing LOL
-		""")
-
+        updateErrorLog.insert(tk.INSERT,pHError)
         # Making the Log read only
         updateErrorLog.configure(state='disabled')
 
         # graph location
-        graphLocation = Button(self, text="Graph Health ", command=lambda:[ph(), phchart()])
+        graphLocation = Button(self, text="Graph Health ", command=lambda: [ph(), phchart()])
         graphLocation.grid(row=1, column=5, columnspan=4, rowspan=3)
 
     def close(self):
@@ -530,27 +514,14 @@ class Oxygen(tk.Frame):
         updateErrorLog.grid(row=1, column=3, columnspan=2, rowspan=5, pady=10, padx=10)
 
         # Inserting Text which is read only
-        updateErrorLog.insert(tk.INSERT,
-                              """ 
-		All the Errors & Updates are listed here. 
-		Hi 
-		Error one == nothing LOL 
-		Error two == nothing LOL
-		Error three == nothing LOL
-		Error four == nothing LOL
-		Error five == nothing LOL
-		Error six == nothing LOL
-		Error seven == nothing LOL
-		""")
+        updateErrorLog.insert(tk.INSERT, oxygenError)
 
         # Making the Log read only
         updateErrorLog.configure(state='disabled')
 
-
         # graph location
-        graphLocation = Button(self, text="Graph Health ", command=lambda:[oxygen(), oxygenchart()])
+        graphLocation = Button(self, text="Graph Health ", command=lambda: [oxygen(), oxygenchart()])
         graphLocation.grid(row=1, column=5, columnspan=4, rowspan=3)
-
 
     def close(self):
         self.master.quit()
